@@ -25,7 +25,7 @@ import com.google.firebase.ktx.Firebase
 
 class Wednesday : Fragment() {
     private lateinit var dateString : String
-    private lateinit var goalList : ArrayList<String>
+    private lateinit var goalList : ArrayList<CharSequence>
     private lateinit var plannedDatabase: DatabaseReference
     private var firebaseUser : FirebaseUser? = null
     private var currentNutritionalGoals: ArrayList<NutritionalGoals>? = null
@@ -64,6 +64,7 @@ class Wednesday : Fragment() {
         try{
             // Set the date
             dateString = getDate()!!
+            goalList = ArrayList<CharSequence>(getGoals()!!)
         }
         catch(e : Exception){
 
@@ -74,6 +75,11 @@ class Wednesday : Fragment() {
     private fun getDate() : String?{
         val data = arguments
         return data?.getString("date")
+    }
+
+    private fun getGoals() : ArrayList<CharSequence>?{
+        val data = arguments
+        return data?.getCharSequenceArrayList("goalList")
     }
 
     // Get goals from the database
@@ -107,7 +113,9 @@ class Wednesday : Fragment() {
     // creates listview occurrence for date
     private fun createDateGoal(){
         if (dateString != String()) {
-            goalList.add(dateString)
+            goalList.add(0, dateString)
+            goalList.add(1, "--- WEEKLY GOALS ---")
+            goalList.add(goalList.size, "--- PLANNED GOALS --- ")
         }
     }
 
@@ -131,6 +139,7 @@ class Wednesday : Fragment() {
             )
         }
 
+        var found = false;
         list.adapter = arrayAdapter
         list.onItemClickListener =
             OnItemClickListener { _, _, position, _ ->
@@ -138,8 +147,11 @@ class Wednesday : Fragment() {
                 for (item : DefinedGoal in currentPlannedGoals!!){
                     if (clickedItem == item.goal){
                         planActivity(R.layout.activity_planned_view, item)
+                        found = true
                     }
                 }
+                if(!found)
+                    weeklyPlanActivity(R.layout.activity_created_goal_weekly)
             }
     }
 
@@ -147,6 +159,12 @@ class Wednesday : Fragment() {
     private fun planActivity(view: Int, definedGoal : DefinedGoal){
         val intent = Intent(activity, PlannedView::class.java)
         intent.putExtra("viewGoal", definedGoal)
+        requireActivity().startActivity(intent)
+    }
+
+    private fun weeklyPlanActivity(view: Int){
+        val intent = Intent(activity, CreatedGoalWeekly::class.java)
+        intent.putExtra("dateSelection", dateString)
         requireActivity().startActivity(intent)
     }
 }

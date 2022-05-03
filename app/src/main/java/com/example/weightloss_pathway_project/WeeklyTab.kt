@@ -11,8 +11,10 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -28,6 +30,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class WeeklyTab : AppCompatActivity() {
@@ -50,6 +53,7 @@ class WeeklyTab : AppCompatActivity() {
             initialize()
             initializeFragment()
             onClick()
+            loadWeeklyGoals()
             if (dateSelection.text.toString() == "") {
                 dateSelection.text = getCurrentDay()
                 Handler(Looper.getMainLooper()).postDelayed({
@@ -57,6 +61,11 @@ class WeeklyTab : AppCompatActivity() {
                 }, 200)
             }
         }, 300)
+
+    }
+
+    private fun loadWeeklyGoals() {
+        //System.out.println(viewPager.adapter.(viewPager.currentItem).toString());
 
     }
 
@@ -90,6 +99,7 @@ class WeeklyTab : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
+                System.out.println(tab.position);
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -164,64 +174,91 @@ class WeeklyTab : AppCompatActivity() {
         val da = DayOfWeek()
         val sunday = da.findDayOfWeek(dateSelection.text.toString())
 
-        val sun = Sunday()
-        val bunSun = Bundle()
-        bunSun.putString("date", sunday)
-        bunSun.putString("color", colar)
-        sun.arguments = bunSun
-        supportFragmentManager.beginTransaction().replace(R.id.fragSunday, sun).commit()
+        var goals = ArrayList<CharSequence>()
 
-        val mon = Monday()
-        val bunMon = Bundle()
-        val monday = da.nextDay(sunday)
-        bunMon.putString("date", monday)
-        bunMon.putString("tabColor", colar)
-        mon.arguments = bunMon
-        supportFragmentManager.beginTransaction().replace(R.id.fragMonday, mon).commit()
+            val event = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    dataSnapshot.child(sunday).children.forEach { goalTypes ->
+                        goalTypes.children.forEach{ goal ->
+                            goals.add(goal.value.toString())
+                        }
+                    }
 
-        val tue = Tuesday()
-        val bunTue = Bundle()
-        val tuesday = da.nextDay(monday)
-        bunTue.putString("date", tuesday)
-        bunTue.putString("tabColor", colar)
-        tue.arguments = bunTue
-        supportFragmentManager.beginTransaction().replace(R.id.fragTuesday, tue).commit()
+                    val sun = Sunday()
+                    val bunSun = Bundle()
+                    bunSun.putString("date", sunday)
+                    bunSun.putString("color", colar)
+                    bunSun.putCharSequenceArrayList("goalList", goals)
+                    sun.arguments = bunSun
+                    supportFragmentManager.beginTransaction().replace(R.id.fragSunday, sun).commit()
 
-        val wed = Wednesday()
-        val bunWed = Bundle()
-        val wednesday = da.nextDay(tuesday)
-        bunWed.putString("date", wednesday)
-        bunWed.putString("tabColor", colar)
-        wed.arguments = bunWed
-        supportFragmentManager.beginTransaction().replace(R.id.fragWednesday, wed).commit()
+                    val mon = Monday()
+                    val bunMon = Bundle()
+                    val monday = da.nextDay(sunday)
+                    bunMon.putString("date", monday)
+                    bunMon.putString("tabColor", colar)
+                    bunMon.putCharSequenceArrayList("goalList", goals)
+                    mon.arguments = bunMon
+                    supportFragmentManager.beginTransaction().replace(R.id.fragMonday, mon).commit()
 
-        val thu = Thursday()
-        val bunThu = Bundle()
-        val thursday = da.nextDay(wednesday)
-        bunThu.putString("date", thursday)
-        bunThu.putString("tabColor", colar)
-        thu.arguments = bunThu
-        supportFragmentManager.beginTransaction().replace(R.id.fragThursday, thu).commit()
+                    val tue = Tuesday()
+                    val bunTue = Bundle()
+                    val tuesday = da.nextDay(monday)
+                    bunTue.putString("date", tuesday)
+                    bunTue.putString("tabColor", colar)
+                    bunTue.putCharSequenceArrayList("goalList", goals)
+                    tue.arguments = bunTue
+                    supportFragmentManager.beginTransaction().replace(R.id.fragTuesday, tue).commit()
 
-        val fri = Friday()
-        val bunFri = Bundle()
-        val friday = da.nextDay(thursday)
-        bunFri.putString("date", friday)
-        bunFri.putString("tabColor", colar)
-        fri.arguments = bunFri
-        supportFragmentManager.beginTransaction().replace(R.id.fragFriday, fri).commit()
+                    val wed = Wednesday()
+                    val bunWed = Bundle()
+                    val wednesday = da.nextDay(tuesday)
+                    bunWed.putString("date", wednesday)
+                    bunWed.putString("tabColor", colar)
+                    bunWed.putCharSequenceArrayList("goalList", goals)
+                    wed.arguments = bunWed
+                    supportFragmentManager.beginTransaction().replace(R.id.fragWednesday, wed).commit()
 
-        val sat = Saturday()
-        val bunSat = Bundle()
-        val saturday = da.nextDay(friday)
-        bunSat.putString("date", saturday)
-        bunSat.putString("tabColor", colar)
-        sat.arguments = bunSat
-        supportFragmentManager.beginTransaction().replace(R.id.fragSaturday, sat).commit()
+                    val thu = Thursday()
+                    val bunThu = Bundle()
+                    val thursday = da.nextDay(wednesday)
+                    bunThu.putString("date", thursday)
+                    bunThu.putString("tabColor", colar)
+                    bunThu.putCharSequenceArrayList("goalList", goals)
+                    thu.arguments = bunThu
+                    supportFragmentManager.beginTransaction().replace(R.id.fragThursday, thu).commit()
 
-        val d = Date()
-        val index = d.dayToNumber(getDay())
-        selectPage(index)
+                    val fri = Friday()
+                    val bunFri = Bundle()
+                    val friday = da.nextDay(thursday)
+                    bunFri.putString("date", friday)
+                    bunFri.putString("tabColor", colar)
+                    bunFri.putCharSequenceArrayList("goalList", goals)
+                    fri.arguments = bunFri
+                    supportFragmentManager.beginTransaction().replace(R.id.fragFriday, fri).commit()
+
+                    val sat = Saturday()
+                    val bunSat = Bundle()
+                    val saturday = da.nextDay(friday)
+                    bunSat.putString("date", saturday)
+                    bunSat.putString("tabColor", colar)
+                    bunSat.putCharSequenceArrayList("goalList", goals)
+                    sat.arguments = bunSat
+                    supportFragmentManager.beginTransaction().replace(R.id.fragSaturday, sat).commit()
+
+                    val d = Date()
+                    val index = d.dayToNumber(getDay())
+                    selectPage(index)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+                }
+            }
+            Firebase.database.reference.child("users")
+                .child(FirebaseAuth.getInstance().currentUser!!.uid).child("weeklyGoals")
+                .addValueEventListener(event)
     }
 
     private fun mainActivity(view : Int) {

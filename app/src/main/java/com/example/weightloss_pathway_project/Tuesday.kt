@@ -25,7 +25,7 @@ import com.google.firebase.ktx.Firebase
 
 class Tuesday : Fragment() {
     private lateinit var dateString : String
-    private lateinit var goalList : ArrayList<String>
+    private lateinit var goalList : ArrayList<CharSequence>
     private lateinit var plannedDatabase: DatabaseReference
     private var firebaseUser : FirebaseUser? = null
     private var currentNutritionalGoals: ArrayList<NutritionalGoals>? = null
@@ -61,9 +61,12 @@ class Tuesday : Fragment() {
         currentNutritionalGoals = ArrayList()
         currentPlannedGoals = ArrayList()
 
+
+
         try{
             // Set the date
             dateString = getDate()!!
+            goalList = ArrayList<CharSequence>(getGoals()!!)
         }
         catch(e : Exception){
 
@@ -74,6 +77,11 @@ class Tuesday : Fragment() {
     private fun getDate() : String?{
         val data = arguments
         return data?.getString("date")
+    }
+
+    private fun getGoals() : ArrayList<CharSequence>?{
+        val data = arguments
+        return data?.getCharSequenceArrayList("goalList")
     }
 
     // Get goals from the database
@@ -107,7 +115,7 @@ class Tuesday : Fragment() {
     // creates listview occurrence for date
     private fun createDateGoal(){
         if (dateString != String()) {
-            goalList.add(dateString)
+            goalList.add(0, dateString)
         }
     }
 

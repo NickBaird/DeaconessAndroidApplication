@@ -166,5 +166,6 @@ class CreateUserCredentials : AppCompatActivity() {
         val user = SaveUser(firstname, lastname, address, email, phone, birthday, isAdmin)
 
         database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("account").setValue(user)
+        database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("colorTheme").setValue("Red")
     }
 }

@@ -59,6 +59,7 @@ class CreatedGoalWeekly : AppCompatActivity() {
             initialize()
             createAdapters()
             onClick()
+            dateSelection.setText(getDate())
             title = "Set Goals"
         }, 500)
     }
@@ -88,6 +89,10 @@ class CreatedGoalWeekly : AppCompatActivity() {
                                         "Baseball", "Tennis", "Stretching", "Yoga", "Pilates", "Home Workout", "Hiking", "Power Walking", "Circuit Training"))
         intensities = ArrayList(mutableListOf("Intensity", "Low", "Moderate", "High"))
         durations = ArrayList(mutableListOf("Duration", "10", "20", "30", "40", "50", "60", "70", "80", "90"))
+    }
+
+    private fun getDate() : String{
+        return intent.extras?.get("dateSelection") as String
     }
 
     private fun createAdapters(){
