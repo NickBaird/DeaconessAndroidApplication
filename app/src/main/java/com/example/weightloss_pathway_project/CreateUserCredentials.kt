@@ -1,7 +1,11 @@
 package com.example.weightloss_pathway_project
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -11,9 +15,9 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.IgnoreExtraProperties
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
@@ -164,8 +168,23 @@ class CreateUserCredentials : AppCompatActivity() {
     // Write new Account to database with username as userId
     private fun writeNewUser(firstname: String, lastname: String, address: String, email : String, phone: String, birthday : String, isAdmin: Boolean) {
         val user = SaveUser(firstname, lastname, address, email, phone, birthday, isAdmin)
+        val allCoaches = ArrayList<String>()
+
+        val coachesListener = object : ValueEventListener {
+            override fun onDataChange(coaches: DataSnapshot) {
+                coaches.children.forEach { coach -> allCoaches.add(coach.key.toString()) }
+
+                for (coach in allCoaches) {
+                    database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("coaches").child(coach).child(System.currentTimeMillis().toString()).setValue("is available to chat with!")
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) { Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException()) }
+        }
+        database.child("coaches").addListenerForSingleValueEvent(coachesListener)
+
 
         database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("account").setValue(user)
         database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("colorTheme").setValue("Red")
+
     }
 }

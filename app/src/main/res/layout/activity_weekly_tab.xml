@@ -8,7 +8,9 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    tools:context=".WeeklyTab">
+    tools:context=".WeeklyTab"
+    android:background="#2b2b2b">
+
 
     <Button
         android:id="@+id/weeklyTabDateSubmitBtn"
@@ -45,6 +47,7 @@
         android:focusableInTouchMode="false"
         android:hint="@string/weeklyTabDateTxt"
         android:inputType="date"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.152"

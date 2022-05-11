@@ -70,7 +70,7 @@ class SelectedGoalWeekly : AppCompatActivity() {
         dateString = String()
         goalList = ArrayList()
         firebaseUser = FirebaseAuth.getInstance().currentUser
-        clientDatabase = Firebase.database.reference.child("users").child(firebaseUser!!.uid).child("clientGoals")
+        clientDatabase = Firebase.database.reference.child("users").child(firebaseUser!!.uid).child("plannedGoals")
         coachDatabase = Firebase.database.reference.child("users").child(firebaseUser!!.uid).child("coachGoals")
         currentFitnessGoals = ArrayList()
         currentNutritionalGoals = ArrayList()
@@ -250,6 +250,7 @@ class SelectedGoalWeekly : AppCompatActivity() {
     // Intent that will open main activity when activated
     private fun personalGoalActivity(view: Int){
         val intent = Intent(this, CreatedGoalWeekly::class.java)
+        intent.putExtra("dateSelection", goalDate.text.toString())
         startActivity(intent)
     }
 

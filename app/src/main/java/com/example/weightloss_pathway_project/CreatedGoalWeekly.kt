@@ -59,7 +59,8 @@ class CreatedGoalWeekly : AppCompatActivity() {
             initialize()
             createAdapters()
             onClick()
-            dateSelection.setText(getDate())
+
+            dateSelection.setText(getDate()!!)
             title = "Set Goals"
         }, 500)
     }
@@ -81,7 +82,7 @@ class CreatedGoalWeekly : AppCompatActivity() {
         newFitGoal = FitnessGoals()
         newNutGoal = NutritionalGoals()
         dayOfWeek = String()
-        database = database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("clientGoals")
+        database = database.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("plannedGoals")
 
 
 

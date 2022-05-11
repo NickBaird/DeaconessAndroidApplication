@@ -12,6 +12,18 @@
                 android:title="@string/menuViewGoals" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/navChat"
+        android:icon="@drawable/ic_baseline_star_24"
+        android:title="Chat With Us" >
+        <menu>
+            <item
+                android:id="@+id/viewChat"
+                android:title="Chat" />
+        </menu>
+    </item>
+
     <item
         android:id="@+id/navAbout"
         android:icon="@drawable/ic_baseline_info_24"

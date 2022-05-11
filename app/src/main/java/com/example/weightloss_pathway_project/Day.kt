@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
+import android.widget.ListAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
@@ -23,7 +24,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
-class Wednesday : Fragment() {
+class Day : Fragment() {
     private lateinit var dateString : String
     private lateinit var goalList : ArrayList<CharSequence>
     private lateinit var plannedDatabase: DatabaseReference
@@ -39,12 +40,12 @@ class Wednesday : Fragment() {
 
     ): View {
 
-        val view : View = inflater.inflate(R.layout.fragment_wednesday, container, false)
+        val view : View = inflater.inflate(R.layout.fragment_sunday, container, false)
 
         list = view.findViewById(R.id.goalsList)
 
         initialize()
-        gettingGoals()
+        gettingGoals( )
         createDateGoal()
 
         // Inflate the layout for this fragment
@@ -60,6 +61,8 @@ class Wednesday : Fragment() {
         currentFitnessGoals = ArrayList()
         currentNutritionalGoals = ArrayList()
         currentPlannedGoals = ArrayList()
+
+
 
         try{
             // Set the date
@@ -113,9 +116,11 @@ class Wednesday : Fragment() {
     // creates listview occurrence for date
     private fun createDateGoal(){
         if (dateString != String()) {
+            if(goalList.size != 0) {
+                goalList.add(0, "--- WEEKLY GOALS ---")
+                goalList.add(goalList.size, "--- PLANNED GOALS ---")
+            }
             goalList.add(0, dateString)
-            goalList.add(1, "--- WEEKLY GOALS ---")
-            goalList.add(goalList.size, "--- PLANNED GOALS ---")
         }
     }
 
@@ -135,7 +140,7 @@ class Wednesday : Fragment() {
         val arrayAdapter = activity?.baseContext?.let {
             ArrayAdapter(
                 it,
-                android.R.layout.simple_list_item_1, goalList
+                R.layout.list_white_text, goalList
             )
         }
 
@@ -148,12 +153,14 @@ class Wednesday : Fragment() {
                     if (clickedItem == item.goal){
                         planActivity(R.layout.activity_planned_view, item)
                         found = true
+                        break
                     }
                 }
                 if(!found) {
                     if(clickedItem != "--- WEEKLY GOALS ---" && clickedItem != "--- PLANNED GOALS ---")
                         weeklyPlanActivity(R.layout.activity_created_goal_weekly)
                 }
+                found = false
             }
     }
 

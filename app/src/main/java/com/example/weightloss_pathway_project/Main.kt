@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
@@ -69,6 +70,9 @@ class Main : AppCompatActivity() {
                 R.id.dailyViewGoals -> {
                     Log.e("color", colar)
                     weeklyTabActivity(R.layout.activity_weekly_tab)
+                }
+                R.id.viewChat -> {
+                    chatActivity(R.layout.activity_message)
                 }
                 R.id.navSettings -> {
                     settingsActivity(R.layout.activity_settings)
@@ -140,6 +144,13 @@ class Main : AppCompatActivity() {
         startActivity(intent)
     }
 
+    // Intent that will open Chat activity when activated
+    private fun chatActivity(view: Int) {
+        val intent = Intent(this, Message::class.java)
+        intent.putExtra("color", colar)
+        startActivity(intent)
+    }
+
     // Intent that will open login activity when activated
     private fun settingsActivity(view: Int){
         val intent = Intent(this, Settings::class.java)
@@ -153,6 +164,7 @@ class Main : AppCompatActivity() {
         intent.putExtra("color", colar)
         startActivity(intent)
     }
+
 
     // important for navigation UI purposes
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
