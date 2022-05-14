@@ -69,7 +69,7 @@ class NotificationService : Service() {
 
     override fun onDestroy() {
         Log.e(TAG, "onDestroy")
-        if(FirebaseAuth.getInstance().uid != null)
+        if(FirebaseAuth.getInstance().uid == null)
             messages?.removeEventListener(messageListener as ValueEventListener)
         super.onDestroy()
     }
