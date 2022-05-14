@@ -87,7 +87,7 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="wrap_content"
-        android:layout_height="462dp"
+        android:layout_height="502dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -95,8 +95,9 @@
         android:layout_marginStart="-1dp"
         android:layout_marginTop="124dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="145dp"
+        android:layout_marginBottom="105dp"
         android:contentDescription="@string/AdapterTab"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="8dp">
 
     </androidx.viewpager.widget.ViewPager>
@@ -108,9 +109,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="125dp"
-        android:layout_marginEnd="126dp"
-        android:layout_marginBottom="35dp"
+        android:layout_marginStart="123dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginBottom="18dp"
         android:text="@string/personalizeGoalWeeklyBack" />
 
 </RelativeLayout>

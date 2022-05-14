@@ -1,9 +1,14 @@
 package com.example.weightloss_pathway_project
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +20,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
@@ -30,6 +37,10 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 class Main : AppCompatActivity() {
+    private val CHANNEL_ID = "chat_channel_id"
+    private val notificationId = 101
+    private var notificationSystem : Intent? = null
+
     private lateinit var myToggle: ActionBarDrawerToggle
     private var currentUser : Client? = null
     private var firebaseUser : FirebaseUser? = null
@@ -40,6 +51,7 @@ class Main : AppCompatActivity() {
     private lateinit var colar : String
     private lateinit var newGoals : Button
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getColor()
@@ -47,7 +59,29 @@ class Main : AppCompatActivity() {
             setContentView(R.layout.activity_main)
             initialize()
             loggedIn()
+            createNotificationChannel()
             onClick()},1500)
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+    }
+
+    override fun onBackPressed() {
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        //if(notificationSystem != null)
+        //   stopService(notificationSystem)
     }
 
     private fun initialize(){
@@ -63,6 +97,9 @@ class Main : AppCompatActivity() {
 
         myToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        notificationSystem = Intent(applicationContext, NotificationService::class.java)
+        startService(notificationSystem)
 
         // provides functionality whenever item clicked on navigation bar in main menu
         nav.setNavigationItemSelectedListener {
@@ -92,8 +129,10 @@ class Main : AppCompatActivity() {
                     val snackbar: Snackbar = Snackbar
                         .make(findViewById(R.id.navSignOut), "Confirm Sign Out?", Snackbar.LENGTH_LONG)
                         snackbar.setAction("YES"){
+                            FirebaseAuth.getInstance().signOut()
                             Toast.makeText(this, "Successfully Logged Out", Toast.LENGTH_LONG).show()
                             loginActivity(R.layout.activity_login)
+                            stopService(notificationSystem)
                         }
 
                     snackbar.show()
@@ -253,6 +292,44 @@ class Main : AppCompatActivity() {
             setTheme(R.style.purpleTheme)
             window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.purple)
             supportActionBar?.setBackgroundDrawable(color)
+        }
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name ="Message Receieved"
+            val descriptionText = "Chat Message"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
+    private fun chatNotification() {
+        val intent = Intent(this, Message::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.wellness_image)
+            .setContentTitle("Example Header")
+            .setContentText("Example Description")
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(notificationId, builder.build())
         }
     }
 }

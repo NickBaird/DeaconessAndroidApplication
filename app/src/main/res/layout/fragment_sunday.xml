@@ -7,11 +7,25 @@
     android:backgroundTint="#00BCD4"
     tools:context=".Sunday">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearSunday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"></LinearLayout>
+    </ScrollView>
+
     <ListView
         android:id="@+id/goalsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:background="#2b2b2b"
-        />
+        android:visibility="invisible" >
+
+    </ListView>
 </FrameLayout>

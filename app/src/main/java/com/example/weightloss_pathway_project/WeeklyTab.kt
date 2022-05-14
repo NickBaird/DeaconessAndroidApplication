@@ -179,8 +179,10 @@ class WeeklyTab : AppCompatActivity() {
 
         var goals = ArrayList<CharSequence>()
 
+
         weeklyGoalListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                goals.clear()
                 dataSnapshot.child(sunday).children.forEach { goalTypes ->
                     goalTypes.children.forEach{ goal ->
                         goals.add(goal.value.toString())
@@ -200,6 +202,7 @@ class WeeklyTab : AppCompatActivity() {
     private fun loadTabs(goals : ArrayList<CharSequence>) {
         val da = DayOfWeek()
         val sunday = da.findDayOfWeek(dateSelection.text.toString())
+
 
         val sun = Day()
         val bunSun = Bundle()

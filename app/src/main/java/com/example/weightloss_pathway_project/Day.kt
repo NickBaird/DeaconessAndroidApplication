@@ -2,6 +2,7 @@ package com.example.weightloss_pathway_project
 
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,10 +10,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.ArrayAdapter
-import android.widget.ListAdapter
-import android.widget.ListView
+import android.widget.AdapterView.TEXT_ALIGNMENT_CENTER
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
+import androidx.core.view.marginLeft
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -33,6 +37,8 @@ class Day : Fragment() {
     private var currentFitnessGoals: ArrayList<FitnessGoals>? = null
     private var currentPlannedGoals: ArrayList<DefinedGoal>? = null
     private lateinit var list : ListView
+    private lateinit var parent : FrameLayout
+    private lateinit var linearSunday : LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,11 +49,13 @@ class Day : Fragment() {
         val view : View = inflater.inflate(R.layout.fragment_sunday, container, false)
 
         list = view.findViewById(R.id.goalsList)
+        parent = view.findViewById(R.id.fragSunday)
+        linearSunday = view.findViewById(R.id.linearSunday)
 
         initialize()
         gettingGoals( )
         createDateGoal()
-
+        refreshGoals()
         // Inflate the layout for this fragment
         return view
     }
@@ -102,7 +110,7 @@ class Day : Fragment() {
                 // Will set listview values here
                 Handler(Looper.getMainLooper()).postDelayed({
                     setListView()
-                }, 1000)
+                }, 500)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -117,22 +125,78 @@ class Day : Fragment() {
     private fun createDateGoal(){
         if (dateString != String()) {
             if(goalList.size != 0) {
-                goalList.add(0, "--- WEEKLY GOALS ---")
-                goalList.add(goalList.size, "--- PLANNED GOALS ---")
+                goalList.add(0, "WEEKLY GOALS")
             }
             goalList.add(0, dateString)
         }
+
+        refreshGoals()
     }
 
     // creates fitness goal and adds to list for listview occurrence
     private fun createPlannedGoals() {
+        var first = true
         if (currentPlannedGoals != null) {
             for (item: DefinedGoal in currentPlannedGoals!!) {
                 if (item.date == dateString) {
+                    if(first) {
+                        first = false
+                        goalList.add(goalList.size, "PLANNED GOALS")
+                    }
                     goalList.add(item.goal)
                 }
             }
         }
+
+        refreshGoals()
+    }
+
+    private fun refreshGoals() {
+        linearSunday.removeAllViews()
+        var sep = ConstraintLayout(linearSunday.context)
+        sep.minHeight = 50
+        var planned = false
+        for(i in 1 until goalList.size) {
+
+            if(goalList[i].equals("PLANNED GOALS")) {
+                planned = true
+                linearSunday.addView(createBlob(" ", 16f, R.drawable.rounded_bottom_weekly))
+                linearSunday.addView(sep)
+                linearSunday.addView(createBlob(goalList[i].toString(), 20f, R.drawable.rounded_top_planned))
+            } else {
+                if (!planned) {
+                    if(i == 1)
+                        linearSunday.addView(createBlob(goalList[i].toString(), 20f, R.drawable.rounded_top_weekly))
+                    else
+                        linearSunday.addView(createBlob(goalList[i].toString(), 16f, R.color.blue))
+
+                    if(i == goalList.size-1)
+                        linearSunday.addView(createBlob(" ", 16f, R.drawable.rounded_bottom_weekly))
+
+                } else {
+                    linearSunday.addView(createBlob(goalList[i].toString(), 16f, R.color.red))
+                    if(i == goalList.size-1)
+                        linearSunday.addView(createBlob(" ", 16f, R.drawable.rounded_bottom_planned))
+
+                }
+            }
+        }
+    }
+
+    private fun createBlob(goalText : String, fontSize : Float, background : Int) : ConstraintLayout {
+        var constraint = ConstraintLayout(linearSunday.context)
+        constraint.minWidth = parent.width
+        constraint.setBackgroundResource(background)
+
+        var text = TextView(linearSunday.context)
+        text.setText(goalText)
+        text.setPadding(20)
+        text.textSize = fontSize
+        text.minWidth = constraint.minWidth - 40
+        text.textAlignment = TEXT_ALIGNMENT_CENTER
+        constraint.addView(text)
+
+        return constraint
     }
 
     // sets listview values
@@ -163,6 +227,8 @@ class Day : Fragment() {
                 found = false
             }
     }
+
+
 
     // Intent that will open PlanningGoals activity when activated
     private fun planActivity(view: Int, definedGoal : DefinedGoal){

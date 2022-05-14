@@ -35,8 +35,10 @@ class Login : AppCompatActivity() {
         initialize()
 
         if (auth.currentUser != null){
-            auth.signOut()
+            loggedInToMain(R.layout.activity_main)
         }
+
+
 
         // OnClick functionality to login
         onClick()
@@ -46,7 +48,7 @@ class Login : AppCompatActivity() {
     private fun loggingInUser(view : Int) {
         // Change input to strings for firebase function collaboration
 
-        val emails = email.text.toString()
+        val emails = email.text.toString().trim()
         val passwords = password.text.toString()
 
         // Input validation

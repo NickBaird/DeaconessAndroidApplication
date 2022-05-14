@@ -1,6 +1,9 @@
 package com.example.weightloss_pathway_project
 
+import android.app.ActivityManager
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -15,9 +18,11 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginLeft
 import androidx.core.view.setPadding
+import com.example.weightloss_pathway_project.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -41,6 +46,7 @@ class Message : AppCompatActivity() {
     private lateinit var messageBottomPanel : ConstraintLayout
     private lateinit var messagesScroll : ScrollView
     private var firebaseUser : FirebaseUser? = null
+    private var notificationSystem : Intent? = null
     private lateinit var colar : String
     private lateinit var colorDatabase: DatabaseReference
     private var messagesFromUser : ArrayList<Pair<Long, String>>? = null
@@ -67,6 +73,12 @@ class Message : AppCompatActivity() {
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        intent = Intent(this, Main::class.java)
+        startActivity(intent)
+    }
+
     override fun onPause() {
         super.onPause()
         allCoaches.removeEventListener(coachListener as ValueEventListener)
@@ -90,6 +102,7 @@ class Message : AppCompatActivity() {
         userMessages = Firebase.database.reference.child("users").child(firebaseUser!!.uid).child("messages")
         coaches = Firebase.database.reference.child("users").child(firebaseUser!!.uid).child("coaches")
         allCoaches = Firebase.database.reference.child("coaches")
+        notificationSystem = Intent(applicationContext, NotificationService::class.java)
     }
 
     private fun loadMessages() {
