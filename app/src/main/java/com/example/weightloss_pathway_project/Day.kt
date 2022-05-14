@@ -192,6 +192,7 @@ class Day : Fragment() {
         text.setText(goalText)
         text.setPadding(20)
         text.textSize = fontSize
+        text.setTextColor(Color.WHITE)
         text.minWidth = constraint.minWidth - 40
         text.textAlignment = TEXT_ALIGNMENT_CENTER
         constraint.addView(text)

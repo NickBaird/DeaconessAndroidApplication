@@ -186,7 +186,6 @@ class Message : AppCompatActivity() {
         constraint.maxWidth = (messageDisplay.width / 1.75).toInt()
         constraint.setPadding(24)
         if(right) {
-            constraint.setBackgroundColor(Color.BLUE)
             constraint.setBackgroundResource(R.drawable.rounded_user_chat_messages)
             constraint.translationX = (messageDisplay.width / 3.00).toFloat()
         } else
@@ -200,8 +199,8 @@ class Message : AppCompatActivity() {
 
         var text = TextView(this@Message)
         text.setText(message)
-        text.breakStrategy = LineBreaker.BREAK_STRATEGY_BALANCED
-        text.maxWidth = constraint.maxWidth
+        text.breakStrategy = LineBreaker.BREAK_STRATEGY_SIMPLE
+        text.maxWidth = (messageDisplay.width / 1.75).toInt() - 96
 
 
         var child = LinearLayout(this@Message)
